@@ -15,30 +15,38 @@ public class Server {
 
 		try {
 			ServerSocket socket = new ServerSocket(8383);
+
 			System.out.println("Listening on port 8383. Waiting for clients ... ");
-			// Listen for connection on port 8383.
-			incomingSocket = socket.accept();
-			System.out.println("Got a connection!");
 
-			Receiver receiver = new Receiver(incomingSocket);
-			receiver.start();	
-			DataOutputStream outToClient = new DataOutputStream(incomingSocket.getOutputStream());	
-			BufferedReader brIn = new BufferedReader(new InputStreamReader(System.in));
+			while (true) {
+				// Listen for connection on port 8383.
+				incomingSocket = socket.accept();
+				System.out.println("Got a connection!");
 
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			System.out.print("[" + dateFormat.format(new Date()) + "]:");
-			while((inputMsg=brIn.readLine())!=null) {
-				System.out.print("[" + dateFormat.format(new Date()) + "]:");
-				outToClient.writeBytes(inputMsg + '\n');
-				outToClient.flush();
-				if (inputMsg.equalsIgnoreCase("Bye")) {
-					//Close the socket and finish.
-					System.out.println("Closing connection.");
-					incomingSocket.close();
-					break;
-				}
-
+				ClientConnection connInstance = new ClientConnection("23", incomingSocket);
+				connInstance.start();
+				System.out.println("Handed off.");
 			}
+
+			//Receiver receiver = new Receiver(incomingSocket);
+			//receiver.start();	
+			// DataOutputStream outToClient = new DataOutputStream(incomingSocket.getOutputStream());	
+			// BufferedReader brIn = new BufferedReader(new InputStreamReader(System.in));
+
+			// DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			// System.out.print("[" + dateFormat.format(new Date()) + "]:");
+			// while((inputMsg=brIn.readLine())!=null) {
+			// 	System.out.print("[" + dateFormat.format(new Date()) + "]:");
+			// 	outToClient.writeBytes(inputMsg + '\n');
+			// 	outToClient.flush();
+			// 	if (inputMsg.equalsIgnoreCase("Bye")) {
+			// 		//Close the socket and finish.
+			// 		System.out.println("Closing connection.");
+			// 		incomingSocket.close();
+			// 		break;
+			// 	}
+
+			// }
 
 		} catch(Exception e) {
 			System.out.println("Exception : " + e);
