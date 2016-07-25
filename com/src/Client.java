@@ -3,6 +3,10 @@ package src;
 import java.io.*;
 import java.net.*;
 
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class Client {
 	
 	public static void main(String[] args) {
@@ -20,8 +24,11 @@ public class Client {
 			BufferedReader brIn = new BufferedReader(new InputStreamReader(System.in));
 			DataOutputStream outstreamToServer = new DataOutputStream(connectionSocket.getOutputStream());
 			BufferedReader instreamFromServer = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-
-			while ((keyInput = brIn.readLine()) != null ) {		
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			System.out.print("[" + dateFormat.format(new Date()) + "]:");
+			while ((keyInput = brIn.readLine()) != null ) {
+				System.out.print("[" + dateFormat.format(new Date()) + "]:");
 				outstreamToServer.writeBytes(keyInput + '\n');
 				outstreamToServer.flush();
 
