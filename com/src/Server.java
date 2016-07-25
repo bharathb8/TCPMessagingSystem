@@ -31,14 +31,12 @@ public class Server {
 	}
 
 	public static List<Long> getActiveUsers() {
-		System.out.println("Got request for active users " + Server.activeUsers.toString());
 		return Server.activeUsers;
 	}
 
 	public static boolean relayMessage(long recipientID, String msgBody) {
 
 		try {
-			System.out.println("Relay Message : " + msgBody);
 			if (Server.messageQueueMap.containsKey(recipientID)){
 				BlockingQueue<String> msgQueue = Server.messageQueueMap.get(recipientID);
 				msgQueue.put(msgBody);

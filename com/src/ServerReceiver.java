@@ -40,9 +40,10 @@ public class ServerReceiver extends Thread {
 		try {
 			reader = new BufferedReader(new InputStreamReader(this.connSocket.getInputStream()));
 			while((incomingMsg = reader.readLine())!= null) {
-
-				if (incomingMsg.equalsIgnoreCase("list")) {
-					System.out.println("Here inside list processor");
+				if (incomingMsg.equalsIgnoreCase("whoami")) {
+					Server.relayMessage(this.selfID, Long.toString(this.selfID));
+				}
+				else if (incomingMsg.equalsIgnoreCase("list")) {
 					List<Long> activeUsers = Server.getActiveUsers();
 					String usersList = getCSVString(activeUsers);
 					Server.relayMessage(this.selfID, usersList);
