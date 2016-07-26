@@ -85,7 +85,6 @@ public class Server {
 			Server.clientConnectionMap.remove(clientID);
 		}
 		Server.activeUsers.remove(clientID);
-		System.out.println("Removed from actives list ");
 		return;
 	}
 

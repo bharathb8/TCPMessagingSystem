@@ -1,3 +1,9 @@
+/**
+* Client Class
+* This class makes a connection to the server.
+* Takes keyboard input from the user and sends it to the server and displays
+* server response.
+**/
 package src;
 
 import java.io.*;
@@ -9,33 +15,39 @@ import java.text.SimpleDateFormat;
 
 public class Client {
 
-	//private DataOutputStream
-	public boolean sendMessage(String msg) {
-		return false;
-	}
+	private static Socket connectionSocket;
+	private static DataOutputStream outstreamToServer;
 	
 	public static void main(String[] args) {
+		String host = "127.0.0.1";
+		if (args.length == 1) {
+			host = args[0];
+		} else if (args.length > 1) {
+			System.out.println("Usage: java Client [server IP]");
+			System.out.println("If server IP is not provided, then Localhost is used.");
+			System.exit(0);
+		}
+
 		String message = null;
 		String keyInput = null;
-
-		try {
-			
+		try {	
 			//Connect to Localhost, port 8383
-			Socket connectionSocket = new Socket("127.0.0.1", 8383);
-			System.out.println("Connected to 127.0.0.1. Now write a msg:");
+			System.out.println("Connecting to " + host);
+			Client.connectionSocket = new Socket(host, 8383);
+			System.out.println("Connected to " + host + " . Now write a msg:");
 
-			Receiver receiver = new Receiver(connectionSocket);
+			ResponseReceiver receiver = new ResponseReceiver(Client.connectionSocket);
 			receiver.start();
+
 			BufferedReader brIn = new BufferedReader(new InputStreamReader(System.in));
-			DataOutputStream outstreamToServer = new DataOutputStream(connectionSocket.getOutputStream());
-			BufferedReader instreamFromServer = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-			
+			Client.outstreamToServer = new DataOutputStream(connectionSocket.getOutputStream());
+						
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			System.out.print("[" + dateFormat.format(new Date()) + "]:");
 			while ((keyInput = brIn.readLine()) != null ) {
 				System.out.print("[" + dateFormat.format(new Date()) + "]:");
-				outstreamToServer.writeBytes(keyInput + '\n');
-				outstreamToServer.flush();
+				Client.outstreamToServer.writeBytes(keyInput + '\n');
+				Client.outstreamToServer.flush();
 
 				if (keyInput.equalsIgnoreCase("Bye")) {
 					receiver.interrupt();
