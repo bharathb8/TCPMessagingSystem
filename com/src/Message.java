@@ -1,3 +1,6 @@
+/**
+* Message class
+**/
 package src;
 
 import java.io.*;
@@ -15,6 +18,18 @@ public class Message {
 		this.sender = sender;
 		this.recipients = recipients;
 		this.messageBody = msg;
+	}
+
+	public long getSender() {
+		return this.sender;
+	}
+
+	public List<Long> getRecipientsList() {
+		return this.recipients;
+	}
+
+	public String getMessageBody() {
+		return this.messageBody;
 	}
 
 }

@@ -40,23 +40,19 @@ public class ClientConnection {
 	protected long selfID;
 	protected Socket connectionSocket;
 	protected BlockingQueue<String> messageQueue;
-	protected ServerReceiver messageReceiver;
+	protected CommandReceiver commandReceiver;
 	protected DispatchMessage dispatcher;
 
 	public ClientConnection(long id, Socket s, BlockingQueue<String> mQ) {
-
 		this.selfID = id;
 		this.connectionSocket = s;
 		this.messageQueue = mQ;
-
-		//Sender(this.connectionSocket);
-		//Sender.start();
 	}
 
 	public void start() {
-		//Start message receiver thread
-		this.messageReceiver = new ServerReceiver(this.connectionSocket, this.selfID);
-		this.messageReceiver.start();
+		// Start command receiver thread
+		this.commandReceiver = new CommandReceiver(this.connectionSocket, this.selfID);
+		this.commandReceiver.start();
 
 		// Start message dispatcher thread
 		this.dispatcher = new DispatchMessage(this.connectionSocket, this.messageQueue);
@@ -65,7 +61,7 @@ public class ClientConnection {
 
 	public void disconnectConnection() {
 		System.out.println("Stopping receiver service");
-		this.messageReceiver.interrupt();
+		this.commandReceiver.interrupt();
 	}
 
 }
