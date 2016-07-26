@@ -25,7 +25,7 @@ public class ClientConnection {
 			try {
 				DataOutputStream outToClient = new DataOutputStream(this.connSocket.getOutputStream());
 				String message;
-				while(true && ! Thread.currentThread().isInterrupted()) {
+				while(! Thread.currentThread().isInterrupted()) {
 					message = this.mQueue.poll(10000, TimeUnit.MILLISECONDS);
 					if (message != null) {
 						outToClient.writeBytes(message + "\n");

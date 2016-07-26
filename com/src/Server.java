@@ -19,19 +19,22 @@ public class Server {
 
 	public static final String COMMAND_WHOAMI = "whoami";
 	public static final String COMMAND_LIST = "list";
-	public static final String COMMAND_SEND = "send";
+	public static final String COMMAND_RELAY = "relay";
 	public static final String COMMAND_BYE = "bye";
 
 	private static long allTimeTotalUsers = 0;
 	private static List<Long> activeUsers;
 	private static HashMap<Long, BlockingQueue<String>> messageQueueMap;
 	private static HashMap<Long, ClientConnection> clientConnectionMap;
+	private static RelayService relayService;
 
+	
 	public static long getNewUserID() {
-		// synchronize this
-		Server.allTimeTotalUsers += 1;
-		long currentID = Server.allTimeTotalUsers;
-		Server.activeUsers.add(currentID);
+		synchronized(Server.class) {
+			Server.allTimeTotalUsers += 1;
+			long currentID = Server.allTimeTotalUsers;
+			Server.activeUsers.add(currentID);
+		}
 		return currentID;
 	}
 
@@ -57,6 +60,10 @@ public class Server {
 		return Server.activeUsers;
 	}
 
+	public static boolean placeRelayRequest(Message msgObject) {
+		return Server.relayService.placeRequest(msgObject);
+	}
+
 	public static boolean relayMessage(long recipientID, String msgBody) {
 
 		try {
@@ -74,6 +81,11 @@ public class Server {
 		}
 	}
 
+	public static ServerSocket getServerSocket(int portNumber) {
+
+
+	}
+
 	public static void main(String args[]) {
 		String inputMsg = null;
 		Socket incomingSocket;
@@ -86,6 +98,10 @@ public class Server {
 			Server.activeUsers = new ArrayList<Long>();
 			Server.messageQueueMap = new HashMap<Long, BlockingQueue<String>>();
 			Server.clientConnectionMap = new HashMap<Long, ClientConnection>();
+
+			Server.relayService = new RelayService(messageQueueMap);
+			Server.relayService.start();
+
 			System.out.println("Listening on port 8383. Waiting for clients ... ");
 
 			while (true) {
