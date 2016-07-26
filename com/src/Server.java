@@ -17,10 +17,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server {
 
+	public static final String COMMAND_WHOAMI = "whoami";
+	public static final String COMMAND_LIST = "list";
+	public static final String COMMAND_SEND = "send";
+	public static final String COMMAND_BYE = "bye";
+
 	private static long allTimeTotalUsers = 0;
 	private static List<Long> activeUsers;
 	private static HashMap<Long, BlockingQueue<String>> messageQueueMap;
-
+	private static HashMap<Long, ClientConnection> clientConnectionMap;
 
 	public static long getNewUserID() {
 		// synchronize this
@@ -30,6 +35,24 @@ public class Server {
 		return currentID;
 	}
 
+	public static void registerNewUser(long clientID) {
+		BlockingQueue<String> newMessageQueue = new LinkedBlockingQueue<String>(10);
+		Server.messageQueueMap.put(clientID, newMessageQueue);
+	}
+
+	public static void disconnectUser(long clientID) {
+		if (Server.messageQueueMap.containsKey(clientID)) {
+			Server.messageQueueMap.remove(clientID);
+		}
+		if (Server.clientConnectionMap.containsKey(clientID)) {
+			Server.clientConnectionMap.get(clientID).disconnectConnection();
+			Server.clientConnectionMap.remove(clientID);
+		}
+		Server.activeUsers.remove(clientID);
+		System.out.println("Removed from actives list ");
+		return;
+	}
+
 	public static List<Long> getActiveUsers() {
 		return Server.activeUsers;
 	}
@@ -37,6 +60,7 @@ public class Server {
 	public static boolean relayMessage(long recipientID, String msgBody) {
 
 		try {
+			System.out.println("Relay Message : " + msgBody);
 			if (Server.messageQueueMap.containsKey(recipientID)){
 				BlockingQueue<String> msgQueue = Server.messageQueueMap.get(recipientID);
 				msgQueue.put(msgBody);
@@ -60,7 +84,8 @@ public class Server {
 			ServerSocket socket = new ServerSocket(8383);
 
 			Server.activeUsers = new ArrayList<Long>();
-			Server.messageQueueMap = new HashMap<Long, BlockingQueue<String>>(); 
+			Server.messageQueueMap = new HashMap<Long, BlockingQueue<String>>();
+			Server.clientConnectionMap = new HashMap<Long, ClientConnection>();
 			System.out.println("Listening on port 8383. Waiting for clients ... ");
 
 			while (true) {
@@ -73,6 +98,7 @@ public class Server {
 				Server.messageQueueMap.put(clientID, newMessageQueue);
 				ClientConnection connInstance = new ClientConnection(clientID, incomingSocket, newMessageQueue);
 				System.out.println("ClientID : " + clientID);
+				Server.clientConnectionMap.put(clientID, connInstance);
 				connInstance.start();
 				System.out.println("Handed off.");
 			}

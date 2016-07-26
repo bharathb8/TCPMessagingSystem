@@ -8,6 +8,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class Client {
+
+	//private DataOutputStream
+	public boolean sendMessage(String msg) {
+		return false;
+	}
 	
 	public static void main(String[] args) {
 		String message = null;
@@ -33,11 +38,11 @@ public class Client {
 				outstreamToServer.flush();
 
 				if (keyInput.equalsIgnoreCase("Bye")) {
+					receiver.interrupt();
 					connectionSocket.close();
 					break;
 				}
 			}
-			
 			
 		} catch(Exception e) {
 			System.out.println("Caught Exception : " + e);

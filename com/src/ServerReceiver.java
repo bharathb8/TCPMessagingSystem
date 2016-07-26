@@ -47,10 +47,18 @@ public class ServerReceiver extends Thread {
 					List<Long> activeUsers = Server.getActiveUsers();
 					String usersList = getCSVString(activeUsers);
 					Server.relayMessage(this.selfID, usersList);
+				} else if (incomingMsg.equalsIgnoreCase(Server.COMMAND_BYE)) {
+					break;
 				}
+
 				System.out.println(incomingMsg);
 				System.out.print("[" + dateFormat.format(new Date()) + "]:");
 			}
+
+			// Client wants to disconnect
+			System.out.println("Received bye.. so disconnecting user");
+			Server.disconnectUser(this.selfID);
+			return;
 
 		} catch (Exception e) {
 			System.out.println("Caught : " + e);
