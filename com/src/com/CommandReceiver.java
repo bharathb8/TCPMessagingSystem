@@ -27,6 +27,13 @@ public class CommandReceiver extends Thread {
 	}
 
 	/**
+	* long getClientID()
+	* returns the clientID of the client
+	**/
+	long getClientID() {
+		return this.clientID;
+	}
+	/**
 	* String getCSVString(List)
 	* Given list of client IDs return a CSV string of their clientIDs.
 	* This method makes sure it excludes the ID of the requesting client.
@@ -76,6 +83,14 @@ public class CommandReceiver extends Thread {
 			}
 
 			msgObject = new Message(this.clientID, recipientsList, msgBody);
+		} else if (words.length>0 && words[0].equalsIgnoreCase(Server.COMMAND_BROADCAST)) {
+			List<Long> broadcastList = Server.getActiveUsers();
+			String msgBody = "";
+			int index = message.indexOf(":");
+			if (index > 0 && index < message.length() - 2) {
+				msgBody = message.substring(index+1);
+			}
+			msgObject = new Message(this.clientID, broadcastList, msgBody);
 		}
 
 		return msgObject;
@@ -95,11 +110,11 @@ public class CommandReceiver extends Thread {
 					List<Long> recipientsList = new ArrayList<Long>();
 					recipientsList.add(this.clientID);
 
-					Server.placeRelayRequest(new Message(0, recipientsList, Long.toString(this.clientID)));
+					Server.placeRelayRequest(new Message(0, recipientsList, Long.toString(this.getClientID())));
 				}
 				else if (incomingMsg.equalsIgnoreCase(Server.COMMAND_LIST)) {
 					List<Long> activeUsers = Server.getActiveUsers();
-					String usersList = getCSVString(activeUsers);
+					String usersList = this.getCSVString(activeUsers);
 					List<Long> recipientsList = new ArrayList<Long>();
 					recipientsList.add(this.clientID);
 
@@ -107,7 +122,7 @@ public class CommandReceiver extends Thread {
 				} else if (incomingMsg.equalsIgnoreCase(Server.COMMAND_BYE)) {
 					break;
 				} else {
-					Message msgObject = parseMessage(incomingMsg);
+					Message msgObject = this.parseMessage(incomingMsg);
 					if (msgObject != null) {
 						Server.placeRelayRequest(msgObject);
 					}

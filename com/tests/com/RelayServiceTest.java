@@ -1,6 +1,5 @@
 package com;
 
-//import junit.framework.TestCase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.util.List;

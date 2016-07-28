@@ -79,7 +79,8 @@ public class ClientConnection {
 	* this method will interrupt the command receiver thread.
 	**/
 	public void disconnectConnection() {
-		this.commandReceiver.interrupt();
+		if (this.commandReceiver != null) {
+			this.commandReceiver.interrupt();
+		}
 	}
-
 }

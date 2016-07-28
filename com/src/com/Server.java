@@ -25,7 +25,9 @@ public class Server {
 	public static final String COMMAND_WHOAMI = "whoami";
 	public static final String COMMAND_LIST = "list";
 	public static final String COMMAND_RELAY = "relay";
+	public static final String COMMAND_BROADCAST = "broadcast";
 	public static final String COMMAND_BYE = "bye";
+
 	public static final int PORT = 8383; 
 
 	// Server Socket the server would listen on.
@@ -52,8 +54,7 @@ public class Server {
 		synchronized(Server.class) {
 			Server.allTimeTotalUsers += 1;
 			currentID = Server.allTimeTotalUsers;
-			Server.activeUsers.add(currentID);
-		}
+		}	
 		return currentID;
 	}
 
@@ -64,7 +65,7 @@ public class Server {
 	* Also creates a connection instance for the client.
 	**/
 	public static ClientConnection registerNewUser(long clientID, Socket socket) {
-
+		Server.activeUsers.add(clientID);
 		BlockingQueue<String> newMessageQueue = new LinkedBlockingQueue<String>(10);
 		Server.messageQueueMap.put(clientID, newMessageQueue);
 		ClientConnection connInstance = new ClientConnection(clientID, socket, newMessageQueue);

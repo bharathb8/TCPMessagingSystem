@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 
 public class Client {
 
+
 	private static Socket connectionSocket;
 	private static DataOutputStream outstreamToServer;
 	
