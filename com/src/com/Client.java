@@ -34,7 +34,7 @@ public class Client {
 		try {	
 			//Connect to Localhost, port 8383
 			System.out.println("Connecting to " + host);
-			Client.connectionSocket = new Socket(host, 8383);
+			Client.connectionSocket = new Socket(host, 8484);
 			System.out.println("Connected to " + host + " . Now write a msg:");
 
 			ResponseReceiver receiver = new ResponseReceiver(Client.connectionSocket);

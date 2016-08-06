@@ -28,7 +28,7 @@ public class Server {
 	public static final String COMMAND_BROADCAST = "broadcast";
 	public static final String COMMAND_BYE = "bye";
 
-	public static final int PORT = 8383; 
+	public static final int PORT = 8484; 
 
 	// Server Socket the server would listen on.
 	private static ServerSocket serverSocket; 
